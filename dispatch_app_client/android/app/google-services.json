@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "975818529830",
+    "firebase_url": "https://dispatchapp-57778.firebaseio.com",
+    "project_id": "dispatchapp-57778",
+    "storage_bucket": "dispatchapp-57778.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:975818529830:android:85af161ca13c4053361ae7",
+        "android_client_info": {
+          "package_name": "com.example.dispatch_app_client"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "975818529830-lgrohuchf5iredjgiv6g7abqqq21gjtp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dispatch_app_client",
+            "certificate_hash": "cf0854ac5b6333ad9e986f3022d38e431522bafb"
+          }
+        },
+        {
+          "client_id": "975818529830-bive3i5hg3bb6v3rqnqu8r3nn309qddl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWNdYldigVkhZIVkNlkokjO4VVJ8YKPTo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "975818529830-bive3i5hg3bb6v3rqnqu8r3nn309qddl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
