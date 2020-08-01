@@ -87,8 +87,13 @@ class AUthProvider with ChangeNotifier {
           user.password,
           user.userType,
           user.token);
-      locator<SettingsServices>().saveAppSettings(
-          new Settings(countryAbbrevation: "ng", isDemoMode: true));
+      locator<SettingsServices>().saveAppSettings(new Settings(
+          countryAbbrevation: "ng",
+          isDemoMode: true,
+          currencySymbol: "NAR",
+          economyBaseFare: 500,
+          expressBaseFare: 1000,
+          premiumBaseFare: 1500));
       storeAutoData(autoLoggedUser);
       //store
       storeAppOnBoardingData(loggedInUser.id);
@@ -120,7 +125,7 @@ class AUthProvider with ChangeNotifier {
 
         rider = new Rider(
             id: value['id'],
-            fullName: value['fullName'],
+            fullName: value['fullname'],
             phoneNumber: value['phoneNumber'],
             email: value['email'],
             password: value['password'],
@@ -434,4 +439,6 @@ class AUthProvider with ChangeNotifier {
     }
     return response;
   }
+
+  Future<void> upDateDemoRiderLocation() {}
 }

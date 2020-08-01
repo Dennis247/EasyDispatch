@@ -20,6 +20,10 @@ class SettingsServices {
       final settingsData = json.encode({
         'countryAbbrevation': settings.countryAbbrevation,
         'isDemoMode': settings.isDemoMode,
+        'currencySymbol': settings.currencySymbol,
+        'economyBaseFare': settings.economyBaseFare,
+        'expressBaseFare': settings.expressBaseFare,
+        'premiumBaseFare': settings.premiumBaseFare
       });
       sharedPrefs.setString(Constants.settingsData, settingsData);
       return ResponseModel(true, "settings saved sucessfully");
@@ -32,14 +36,23 @@ class SettingsServices {
     final sharedPref = await SharedPreferences.getInstance();
     final sharedData = sharedPref.getString(Constants.settingsData);
     if (sharedData == null) {
-      final appSettings =
-          new Settings(countryAbbrevation: 'ng', isDemoMode: true);
+      final appSettings = new Settings(
+          countryAbbrevation: 'ng',
+          isDemoMode: true,
+          currencySymbol: 'NAR',
+          economyBaseFare: 500,
+          expressBaseFare: 1000,
+          premiumBaseFare: 1500);
       saveAppSettings(appSettings);
     } else {
       final settingsData = json.decode(sharedData) as Map<String, Object>;
       _appSettings = new Settings(
           countryAbbrevation: settingsData['countryAbbrevation'],
-          isDemoMode: settingsData['isDemoMode']);
+          isDemoMode: settingsData['isDemoMode'],
+          currencySymbol: settingsData['currencySymbol'],
+          economyBaseFare: settingsData['economyBaseFare'],
+          expressBaseFare: settingsData['expressBaseFare'],
+          premiumBaseFare: settingsData['premiumBaseFare']);
     }
   }
 }

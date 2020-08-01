@@ -14,6 +14,7 @@ class DemoDispatchLocation extends StatefulWidget {
 
 class _DemoDispatchLocationState extends State<DemoDispatchLocation> {
   Set<Polyline> polylines;
+  LatLngBounds bound;
   List<LatLng> polylineCoordinates;
   //LatLngBounds bound;
   LatLng myLocation;
@@ -64,22 +65,91 @@ class _DemoDispatchLocationState extends State<DemoDispatchLocation> {
           rider.longitude,
           widget.dispatch.destinationLatitude,
           widget.dispatch.destinationLongitude);
+
+      _markers.add(Marker(
+          markerId: MarkerId("destination"),
+          position: LatLng(widget.dispatch.destinationLatitude,
+              widget.dispatch.destinationLongitude),
+          icon: _start,
+          infoWindow: InfoWindow(
+            title: "Destination",
+          ),
+          onTap: () {}));
+
+      _markers.add(Marker(
+          markerId: MarkerId("rider"),
+          position: LatLng(rider.latitude, rider.longitude),
+          icon: _end,
+          infoWindow: InfoWindow(
+            title: "Rider",
+          ),
+          onTap: () {}));
+      _moveCamera(rider.latitude, rider.longitude);
     } catch (e) {
       GlobalWidgets.showFialureDialogue(e.toString(), context);
     }
     _setLoadingState(false);
   }
 
+  void _getLatLngBounds(LatLng from, LatLng to) {
+    if (from.latitude > to.latitude && from.longitude > to.longitude) {
+      bound = LatLngBounds(southwest: to, northeast: from);
+    } else if (from.longitude > to.longitude) {
+      bound = LatLngBounds(
+          southwest: LatLng(from.latitude, to.longitude),
+          northeast: LatLng(to.latitude, from.longitude));
+    } else if (from.latitude > to.latitude) {
+      bound = LatLngBounds(
+          southwest: LatLng(to.latitude, from.longitude),
+          northeast: LatLng(from.latitude, to.longitude));
+    } else {
+      bound = LatLngBounds(southwest: from, northeast: to);
+    }
+  }
+
+  void check(CameraUpdate u, GoogleMapController c) async {
+    c.animateCamera(u);
+    LatLngBounds l1 = await c.getVisibleRegion();
+    LatLngBounds l2 = await c.getVisibleRegion();
+    print(l1.toString());
+    print(l2.toString());
+    if (l1.southwest.latitude == -90 || l2.southwest.latitude == -90)
+      check(u, c);
+  }
+
+  void _moveCamera(
+      double _currentRiderLatitude, double _currentRiderLongitude) async {
+    _getLatLngBounds(
+        LatLng(_currentRiderLatitude, _currentRiderLongitude),
+        LatLng(widget.dispatch.destinationLatitude,
+            widget.dispatch.destinationLongitude));
+    GoogleMapController controller = await _controller.future;
+    CameraUpdate u2 = CameraUpdate.newLatLngBounds(bound, 75);
+    controller.animateCamera(u2).then((void v) {
+      check(u2, controller);
+    });
+  }
+
   int index = 0;
   void updatePolyLinePoints() async {
+    polylineCoordinates.add(LatLng(
+      widget.dispatch.destinationLatitude,
+      widget.dispatch.destinationLongitude,
+    ));
     _demoTimer = Timer.periodic(Duration(milliseconds: 300), (t) {
       updateTaxiOnMap(polylineCoordinates[index]);
+      _moveCamera(polylineCoordinates[index].latitude,
+          polylineCoordinates[index].longitude);
+    });
+    riderRef.child(rider.id).update({
+      "latitude": polylineCoordinates[index].latitude,
+      "longitude": polylineCoordinates[index].longitude
     });
   }
 
   void updateTaxiOnMap(LatLng taxiPosition) async {
     CameraPosition cPosition = CameraPosition(
-      zoom: 13,
+      zoom: 10,
       tilt: 40,
       bearing: 30,
       target: LatLng(taxiPosition.latitude, taxiPosition.longitude),
@@ -129,16 +199,6 @@ class _DemoDispatchLocationState extends State<DemoDispatchLocation> {
     super.initState();
   }
 
-  void check(CameraUpdate u, GoogleMapController c) async {
-    c.animateCamera(u);
-    LatLngBounds l1 = await c.getVisibleRegion();
-    LatLngBounds l2 = await c.getVisibleRegion();
-    print(l1.toString());
-    print(l2.toString());
-    if (l1.southwest.latitude == -90 || l2.southwest.latitude == -90)
-      check(u, c);
-  }
-
   @override
   Widget build(BuildContext context) {
     final appSize = GlobalWidgets.getAppSize(context);
@@ -178,35 +238,6 @@ class _DemoDispatchLocationState extends State<DemoDispatchLocation> {
                     onMapCreated: (GoogleMapController controller) {
                       controller.setMapStyle(_mapStyle);
                       _controller.complete(controller);
-                      setState(() {
-                        _markers.add(Marker(
-                            markerId: MarkerId("destination"),
-                            position: LatLng(
-                                widget.dispatch.destinationLatitude,
-                                widget.dispatch.destinationLongitude),
-                            icon: _start,
-                            infoWindow: InfoWindow(
-                              title: "Destination",
-                            ),
-                            onTap: () {}));
-
-                        _markers.add(Marker(
-                            markerId: MarkerId("rider"),
-                            position: LatLng(rider.latitude, rider.longitude),
-                            icon: _end,
-                            infoWindow: InfoWindow(
-                              title: "Rider",
-                            ),
-                            onTap: () {}));
-                      });
-
-                      Future.delayed(const Duration(milliseconds: 100), () {
-                        CameraUpdate u2 = CameraUpdate.newLatLngBounds(
-                            locator<GoogleMapServices>().bounds, 50);
-                        controller.animateCamera(u2).then((void v) {
-                          //  check(u2, controller);
-                        });
-                      });
                     },
                   ),
                 ),

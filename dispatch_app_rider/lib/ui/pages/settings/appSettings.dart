@@ -42,6 +42,8 @@ class _AppSettingsState extends State<AppSettings> {
           isDemoMode: _isDemoMode);
       final response =
           await locator<SettingsServices>().saveAppSettings(settings);
+      await Provider.of<LocationProvider>(context, listen: false)
+          .startLocationService(start: _isDemoMode);
       if (response.isSUcessfull) {
         GlobalWidgets.showSuccessDialogue(response.responseMessage, context);
       } else {

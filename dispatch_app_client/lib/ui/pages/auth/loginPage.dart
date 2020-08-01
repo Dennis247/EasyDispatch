@@ -36,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
     _startLoading(true);
     try {
       final response = await Provider.of<AUthProvider>(context, listen: false)
-          .login(_emailController.text, _passwordController.text);
+          .login(_emailController.text.trim(), _passwordController.text.trim());
       if (response.isSUcessfull) {
         Navigator.of(context).pushReplacementNamed(HompePage.routeName);
       } else {

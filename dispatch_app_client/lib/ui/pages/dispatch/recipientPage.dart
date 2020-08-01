@@ -2,7 +2,6 @@ import 'package:dispatch_app_client/ui/pages/dispatch/confirmDispatch.dart';
 import 'package:dispatch_app_client/src/lib_export.dart';
 import 'package:flutter/material.dart';
 
-
 class RecipientPage extends StatefulWidget {
   static final String routeName = "recipient-page";
 

@@ -42,6 +42,9 @@ class Constants {
   static final String pickUpDispatchNotification = "Rider PickUp";
   static final String payOnDelivery = "Pay On Delivery";
   static final String payOnline = "Pay Online";
+  static final String confirmDispatchCompleteMessage =
+      "Confirm this Dispatch is Complete";
+  static final String confirmAcceptDispatchMessage = "Confirm Accept Dispatch";
 
   static String stringValidator(String value, String controllerName) {
     if (value.isEmpty) {

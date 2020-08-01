@@ -33,10 +33,8 @@ class AppTextStyles {
     color: Colors.green,
   );
 
-  static final orangeTextStyle = GoogleFonts.poppins(
-    fontSize: 14,
-    color: Colors.orange,
-  );
+  static final orangeTextStyle =
+      GoogleFonts.poppins(fontSize: 14, color: Colors.deepOrange);
 
   static final smallWhiteTextStyle = GoogleFonts.poppins(
       fontSize: 10, color: Colors.white, fontWeight: FontWeight.w600);

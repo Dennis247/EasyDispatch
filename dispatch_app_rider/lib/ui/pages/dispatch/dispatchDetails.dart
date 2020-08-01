@@ -109,28 +109,32 @@ class _DispatchDetailsState extends State<DispatchDetails> {
         width: appSzie.width,
         buttonText: "ACCEPT DISPATCH",
         function: () async {
-          _startLoading(true);
-          //set dispatch status to active and set dispatatch to rider Id
-          final ResponseModel responseModel = await dispatchProvider
-              .assignDispatchToRider(widget.dispatch.id, loggedInRider.id);
-          if (!responseModel.isSUcessfull) {
-            GlobalWidgets.showFialureDialogue(
-                responseModel.responseMessage, context);
-            return;
-          } else {
-            Provider.of<NotificationProvider>(context, listen: false)
-                .displayNotification("Dispatch Accepted",
-                    "Dispatch Delivery for ${widget.dispatch.dispatchReciever}\n(${widget.dispatch.dispatchRecieverPhone})\naccepted by ${loggedInRider.fullName}");
-            //send local notification to deliver dispatch
-            //send user the notification that rider si coming for pick up
-            Provider.of<NotificationProvider>(context, listen: false)
-                .createPickUpNotification(widget.dispatch);
-          }
-          _startLoading(false);
-          //goto dashboard
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => HomePage()),
-              (Route<dynamic> route) => false);
+          //ask for confirmation
+          GlobalWidgets.showConfirmationDialogue(
+              Constants.confirmAcceptDispatchMessage, context, () async {
+            _startLoading(true);
+            //set dispatch status to active and set dispatatch to rider Id
+            final ResponseModel responseModel = await dispatchProvider
+                .assignDispatchToRider(widget.dispatch.id, loggedInRider.id);
+            if (!responseModel.isSUcessfull) {
+              GlobalWidgets.showFialureDialogue(
+                  responseModel.responseMessage, context);
+              return;
+            } else {
+              Provider.of<NotificationProvider>(context, listen: false)
+                  .displayNotification("Dispatch Accepted",
+                      "Dispatch Delivery for ${widget.dispatch.dispatchReciever}\n(${widget.dispatch.dispatchRecieverPhone})\naccepted by ${loggedInRider.fullName}");
+              //send local notification to deliver dispatch
+              //send user the notification that rider si coming for pick up
+              Provider.of<NotificationProvider>(context, listen: false)
+                  .createPickUpNotification(widget.dispatch);
+            }
+            _startLoading(false);
+            //goto dashboard
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => HomePage()),
+                (Route<dynamic> route) => false);
+          });
         },
       );
     } else if (widget.dispatch.dispatchStatus ==

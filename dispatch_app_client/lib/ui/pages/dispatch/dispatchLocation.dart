@@ -18,7 +18,7 @@ class _DispatchLocationState extends State<DispatchLocation> {
   double _currentRiderLongitude;
   StreamSubscription subscription;
 
-  LatLng myLocation = LatLng(6.5244, 3.3792);
+  LatLng myLocation;
   Completer<GoogleMapController> _controller = Completer();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   BitmapDescriptor _start;
@@ -37,6 +37,8 @@ class _DispatchLocationState extends State<DispatchLocation> {
 
   @override
   void initState() {
+    myLocation = LatLng(widget.dispatch.destinationLatitude,
+        widget.dispatch.destinationLongitude);
     BitmapDescriptor.fromAssetImage(ImageConfiguration(devicePixelRatio: 2.5),
             'assets/images/start.png')
         .then((onValue) {
