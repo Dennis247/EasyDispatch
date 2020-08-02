@@ -33,7 +33,7 @@ class LocationProvider with ChangeNotifier {
     BackgroundLocation.getPermissions(
       onGranted: () {
         //get current device location
-        if (!start) {
+        if (start) {
           BackgroundLocation.startLocationService();
           BackgroundLocation().getCurrentLocation().then((location) {
             //update the current location in database

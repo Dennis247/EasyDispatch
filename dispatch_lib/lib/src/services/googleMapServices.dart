@@ -7,6 +7,7 @@ import 'package:dispatch_lib/src/services/settingsServices.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:tuple/tuple.dart';
 
 class GoogleMapServices {
   List<LatLng> _polylineCoordinates;
@@ -101,7 +102,6 @@ class GoogleMapServices {
       double _startPlaceDetaillng,
       double _endPlaceDetaillat,
       double _endPlaceDetaillng) async {
-        final polyCordinates =
     _startPlaceDetail = startPlaceDetail;
     _endPlaceDetail = endPlaceDetail;
     PolylinePoints polylinePoints = PolylinePoints();
@@ -117,8 +117,8 @@ class GoogleMapServices {
       result.points.forEach((PointLatLng point) {
         _polylineCoordinates.add(LatLng(point.latitude, point.longitude));
       });
-      return _polylineCoordinates;
     }
+    return _polylineCoordinates;
   }
 
   Future<void> getDemoDetails(double riderLat, double riderLng,
@@ -145,5 +145,28 @@ class GoogleMapServices {
           points: polylineCoordinates);
       _polylines.add(polyline);
     }
+  }
+
+  //get base fare & price per km
+  Tuple2<double, double> getPricePerKM(
+      String estimatedDistance, String dispatchType) {
+    final appSettings = locator<SettingsServices>().appSettings;
+    Tuple2<double, double> distanceBaseFare;
+    double baseFare;
+    double totalPricePerKm;
+    estimatedDistance = estimatedDistance.replaceAll("km", "").trim();
+    totalPricePerKm = appSettings.pricePerKM * double.parse(estimatedDistance);
+    if (dispatchType == Constants.dispatchTypeExpress) {
+      baseFare = appSettings.expressBaseFare;
+    }
+    if (dispatchType == Constants.dispatchTypePremiun) {
+      baseFare = appSettings.premiumBaseFare;
+    }
+    if (dispatchType == Constants.dispatchTypeEconomy) {
+      baseFare = appSettings.economyBaseFare;
+    }
+    totalPricePerKm = totalPricePerKm + baseFare;
+    distanceBaseFare = Tuple2<double, double>(baseFare, totalPricePerKm);
+    return distanceBaseFare;
   }
 }

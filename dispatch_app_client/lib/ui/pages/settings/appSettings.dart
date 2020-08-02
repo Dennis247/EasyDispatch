@@ -15,6 +15,7 @@ class _AppSettingsState extends State<AppSettings> {
       new TextEditingController();
   TextEditingController _premiumnBaseFareController =
       new TextEditingController();
+  TextEditingController _pricePerKmController = new TextEditingController();
   bool _isDemoMode = false;
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
@@ -31,6 +32,8 @@ class _AppSettingsState extends State<AppSettings> {
         locator<SettingsServices>().appSettings.expressBaseFare.toString();
     _premiumnBaseFareController.text =
         locator<SettingsServices>().appSettings.premiumBaseFare.toString();
+    _pricePerKmController.text =
+        locator<SettingsServices>().appSettings.pricePerKM.toString();
     super.initState();
   }
 
@@ -58,7 +61,9 @@ class _AppSettingsState extends State<AppSettings> {
           currencySymbol: _currencySymbolController.text,
           economyBaseFare: double.parse(_economyBaseFareCOntroller.text),
           expressBaseFare: double.parse(_expressBaseFareController.text),
-          premiumBaseFare: double.parse(_premiumnBaseFareController.text));
+          premiumBaseFare: double.parse(_premiumnBaseFareController.text),
+          pricePerKM: double.parse(_pricePerKmController.text),
+          stopLocationService: false);
       final response =
           await locator<SettingsServices>().saveAppSettings(settings);
       if (response.isSUcessfull) {
@@ -260,6 +265,31 @@ class _AppSettingsState extends State<AppSettings> {
                                     validator: (value) {
                                       return Constants.stringValidator(
                                           value, "premiun basefare");
+                                    },
+                                  ))
+                            ],
+                          ),
+                          Divider(),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  "Price Per KM",
+                                  style: AppTextStyles.appTextStyle,
+                                ),
+                              ),
+                              Expanded(
+                                  flex: 1,
+                                  child: AppTextInputWIdget(
+                                    obscureText: false,
+                                    controller: _pricePerKmController,
+                                    keyboardType: TextInputType.number,
+                                    validator: (value) {
+                                      return Constants.stringValidator(
+                                          value, "price per km");
                                     },
                                   ))
                             ],

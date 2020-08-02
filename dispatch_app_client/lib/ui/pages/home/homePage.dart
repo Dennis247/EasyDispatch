@@ -433,14 +433,23 @@ class _HompePageState extends State<HompePage> {
                           "Delivery Location", dispatch.dispatchDestination),
                       Divider(),
                       _buildListTileDialogue(
+                          "Estimated Time", dispatch.estimatedDIspatchDuration),
+                      Divider(),
+                      _buildListTileDialogue(
                           "Total Distance", dispatch.estimatedDistance),
                       Divider(),
                       _buildListTileDialogue(
-                          "Estimated Time", dispatch.estimatedDIspatchDuration),
+                          "Price Per KM",
+                          locator<SettingsServices>()
+                              .appSettings
+                              .pricePerKM
+                              .toString()),
                       Divider(),
-                      _buildListTileDialogue("Base Delivery Fee", "N 1000"),
+                      _buildListTileDialogue("Base Delivery Fee",
+                          dispatch.dispatchBaseFare.toString()),
                       Divider(),
-                      _buildListTileDialogue("Total Delivery Fee", "N 5000"),
+                      _buildListTileDialogue("Total Delivery Fee",
+                          dispatch.dispatchTotalFare.toString()),
                       SizedBox(
                         height: appSize.height * 0.04,
                       ),

@@ -23,7 +23,9 @@ class SettingsServices {
         'currencySymbol': settings.currencySymbol,
         'economyBaseFare': settings.economyBaseFare,
         'expressBaseFare': settings.expressBaseFare,
-        'premiumBaseFare': settings.premiumBaseFare
+        'premiumBaseFare': settings.premiumBaseFare,
+        'stopLocationService': settings.stopLocationService,
+        'pricePerKM': settings.pricePerKM
       });
       sharedPrefs.setString(Constants.settingsData, settingsData);
       return ResponseModel(true, "settings saved sucessfully");
@@ -42,7 +44,9 @@ class SettingsServices {
           currencySymbol: 'NAR',
           economyBaseFare: 500,
           expressBaseFare: 1000,
-          premiumBaseFare: 1500);
+          premiumBaseFare: 1500,
+          stopLocationService: true,
+          pricePerKM: 100);
       saveAppSettings(appSettings);
     } else {
       final settingsData = json.decode(sharedData) as Map<String, Object>;
@@ -52,7 +56,13 @@ class SettingsServices {
           currencySymbol: settingsData['currencySymbol'],
           economyBaseFare: settingsData['economyBaseFare'],
           expressBaseFare: settingsData['expressBaseFare'],
-          premiumBaseFare: settingsData['premiumBaseFare']);
+          premiumBaseFare: settingsData['premiumBaseFare'],
+          stopLocationService: settingsData['stopLocationService'] == null
+              ? true
+              : settingsData['stopLocationService'],
+          pricePerKM: settingsData['pricePerKM'] == null
+              ? 100
+              : settingsData['pricePerKM']);
     }
   }
 }

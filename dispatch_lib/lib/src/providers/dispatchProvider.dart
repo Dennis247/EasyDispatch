@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dispatch_lib/dispatch_lib.dart';
 import 'package:dispatch_lib/src/models/PlaceDistanceTime.dart';
 import 'package:dispatch_lib/src/models/constants.dart';
 import 'package:dispatch_lib/src/models/dispatch.dart';
@@ -147,6 +148,8 @@ class DispatchProvider with ChangeNotifier {
     try {
       final placeDistanceTime = await getPlaceDistanceTimeWithAddress(
           pickUpLocation, dispatchDestination, token);
+      final pricePerKM = locator<GoogleMapServices>()
+          .getPricePerKM(placeDistanceTime.distance, dispatchType);
       final Dispatch dispatch = new Dispatch(
           id: uuid.v4(),
           userId: loggedInUser.id,
@@ -155,13 +158,13 @@ class DispatchProvider with ChangeNotifier {
           dispatchDate: DateTime.now(),
           pickUpLocation: pickUpLocation,
           dispatchDestination: dispatchDestination,
-          dispatchBaseFare: Constants.dispatchBaseFare,
+          dispatchBaseFare: pricePerKM.item1,
           dispatchType: dispatchType,
           dispatchStatus: Constants.dispatchPendingStatus,
           currentLocation: "",
           estimatedDIspatchDuration: placeDistanceTime.duration,
           estimatedDistance: placeDistanceTime.distance,
-          dispatchTotalFare: 5000,
+          dispatchTotalFare: pricePerKM.item2,
           dispatchReciever: recieverName,
           dispatchRecieverPhone: recieverPhone,
           dispatchDescription: dispatchDescription,

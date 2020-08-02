@@ -93,7 +93,9 @@ class AUthProvider with ChangeNotifier {
           currencySymbol: "NAR",
           economyBaseFare: 500,
           expressBaseFare: 1000,
-          premiumBaseFare: 1500));
+          premiumBaseFare: 1500,
+          stopLocationService: false,
+          pricePerKM: 100));
       storeAutoData(autoLoggedUser);
       //store
       storeAppOnBoardingData(loggedInUser.id);
@@ -373,8 +375,15 @@ class AUthProvider with ChangeNotifier {
           token: rider.token,
           latitude: rider.latitude,
           longitude: rider.longitude);
-      locator<SettingsServices>().saveAppSettings(
-          new Settings(countryAbbrevation: "ng", isDemoMode: true));
+      locator<SettingsServices>().saveAppSettings(new Settings(
+          countryAbbrevation: "ng",
+          isDemoMode: true,
+          currencySymbol: "NAR",
+          economyBaseFare: 500,
+          expressBaseFare: 1000,
+          premiumBaseFare: 1500,
+          stopLocationService: false,
+          pricePerKM: 100));
       storeAutoRiderData(loggedInRider);
       storeAppOnBoardingData(loggedInRider.id);
       return ResponseModel(true, "Rider SignUp Sucessfull");
@@ -439,6 +448,4 @@ class AUthProvider with ChangeNotifier {
     }
     return response;
   }
-
-  Future<void> upDateDemoRiderLocation() {}
 }
