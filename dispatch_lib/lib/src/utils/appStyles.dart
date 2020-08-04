@@ -59,6 +59,9 @@ class AppTextStyles {
     color: Constants.primaryColorDark,
   );
 
+  static final moneyTextStyle = GoogleFonts.poppins(
+      fontSize: 12, color: Colors.green, fontWeight: FontWeight.w600);
+
   static final onBoardingNavigator = GoogleFonts.poppins(
       fontSize: 14,
       color: Constants.primaryColorDark,

@@ -399,6 +399,20 @@ class _HompePageState extends State<HompePage> {
     );
   }
 
+  _buildCurrencyTile(String title, String subTitle) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          title,
+          style: AppTextStyles.smallgreyTextStyle,
+        ),
+        GlobalWidgets.getFormattedAmount(subTitle),
+      ],
+    );
+  }
+
   _buildBottomSheetConfirmation(Dispatch dispatch, String image) async {
     final appSize = GlobalWidgets.getAppSize(context);
     return showModalBottomSheet(
@@ -438,17 +452,17 @@ class _HompePageState extends State<HompePage> {
                       _buildListTileDialogue(
                           "Total Distance", dispatch.estimatedDistance),
                       Divider(),
-                      _buildListTileDialogue(
-                          "Price Per KM",
+                      _buildCurrencyTile(
+                          "Cost Per KM",
                           locator<SettingsServices>()
                               .appSettings
                               .pricePerKM
                               .toString()),
                       Divider(),
-                      _buildListTileDialogue("Base Delivery Fee",
+                      _buildCurrencyTile("Base Delivery Fee",
                           dispatch.dispatchBaseFare.toString()),
                       Divider(),
-                      _buildListTileDialogue("Total Delivery Fee",
+                      _buildCurrencyTile("Total Delivery Fee",
                           dispatch.dispatchTotalFare.toString()),
                       SizedBox(
                         height: appSize.height * 0.04,

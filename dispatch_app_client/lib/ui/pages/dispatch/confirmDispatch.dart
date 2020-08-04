@@ -21,6 +21,24 @@ class ConfirmDispatch extends StatelessWidget {
     );
   }
 
+  _buildCurrencyRowItem(String title, String subTitle) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          title,
+          style: AppTextStyles.smallgreyTextStyle,
+        ),
+        GlobalWidgets.getFormattedAmount(subTitle)
+        // Text(
+        //   subTitle,
+        //   style: AppTextStyles.appTextStyle,
+        // ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final appSzie = GlobalWidgets.getAppSize(context);
@@ -66,9 +84,20 @@ class ConfirmDispatch extends StatelessWidget {
                 _buildConfrimRowItem("Estimated Time",
                     currentDispatch.estimatedDIspatchDuration),
                 Divider(),
-                _buildConfrimRowItem("Base Delivery Fee", "N 1000"),
+                _buildCurrencyRowItem(
+                    "Cost Per KM",
+                    locator<SettingsServices>()
+                        .appSettings
+                        .pricePerKM
+                        .toString()),
                 Divider(),
-                _buildConfrimRowItem("Total Delivery Fee", "N 5000"),
+                _buildCurrencyRowItem("Base Delivery Fee",
+                    currentDispatch.dispatchBaseFare.toString()),
+                //  _buildConfrimRowItem("Base Delivery Fee", "N 1000"),
+                Divider(),
+                _buildCurrencyRowItem("Total Delivery Fee",
+                    currentDispatch.dispatchTotalFare.toString()),
+                // _buildConfrimRowItem("Total Delivery Fee", "N 5000"),
                 Divider(),
                 _buildConfrimRowItem(
                     "Reciever Name", currentDispatch.dispatchReciever),

@@ -17,8 +17,13 @@ class GlobalWidgets {
       leadingSymbol: appSettings.currencySymbol,
       shorteningPolicy: ShorteningPolicy.NoShortening,
       trailingSymbol: "",
-      useSymbolPadding: false,
+      useSymbolPadding: true,
     );
+    final text = Text(
+      result,
+      style: AppTextStyles.moneyTextStyle,
+    );
+    return text;
   }
 
   static Size getAppSize(BuildContext context) {
