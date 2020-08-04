@@ -1,11 +1,26 @@
+import 'package:dispatch_lib/dispatch_lib.dart';
 import 'package:dispatch_lib/src/models/constants.dart';
 import 'package:dispatch_lib/src/utils/appStyles.dart';
 import 'package:flutter/material.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
+
 //import 'package:progress_indicators/progress_indicators.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class GlobalWidgets {
+  static Text getFormattedAmount(String amount) {
+    final appSettings = locator<SettingsServices>().appSettings;
+
+    var result = toCurrencyString(
+      amount,
+      leadingSymbol: appSettings.currencySymbol,
+      shorteningPolicy: ShorteningPolicy.NoShortening,
+      trailingSymbol: "",
+      useSymbolPadding: false,
+    );
+  }
+
   static Size getAppSize(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return size;

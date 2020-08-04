@@ -30,9 +30,10 @@ dependencies:
   firebase_messaging:
   tuple: ^1.0.3 
   background_location:   
-  rave_flutter:
+  rave_flutter: ^0.0.9-alpha+1
   get_it:
   flutter_spinkit: ^4.1.2+1
+  flutter_multi_formatter: ^1.1.6
   # cached_network_image:
 
 
