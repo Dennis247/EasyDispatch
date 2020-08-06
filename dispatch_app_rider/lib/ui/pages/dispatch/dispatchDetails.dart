@@ -44,6 +44,20 @@ class _DispatchDetailsState extends State<DispatchDetails> {
     );
   }
 
+  _buildRow2Details(String title, String subTitle) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          title,
+          style: AppTextStyles.smallgreyTextStyle,
+        ),
+        GlobalWidgets.getFormattedAmount(subTitle),
+      ],
+    );
+  }
+
   _buildRowDetails2(String title, String subTitle, IconData iconData,
       String iconTitle, Function function) {
     return Row(
@@ -263,10 +277,7 @@ class _DispatchDetailsState extends State<DispatchDetails> {
                       })
                     : SizedBox(),
                 Divider(),
-                _buildRowDetails("Base Delivery Fee",
-                    widget.dispatch.dispatchBaseFare.toString()),
-                Divider(),
-                _buildRowDetails("Total Delivery Fee",
+                _buildRow2Details("DeliveryFee",
                     widget.dispatch.dispatchTotalFare.toString()),
                 Divider(),
                 _buildRowDetails(

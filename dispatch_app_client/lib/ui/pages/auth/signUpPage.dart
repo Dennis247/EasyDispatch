@@ -70,7 +70,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Image.asset(
-                    'assets/images/on_the_way.png',
+                    'assets/images/order_delivered.png',
                     scale: 2.5,
                   ),
                   SizedBox(

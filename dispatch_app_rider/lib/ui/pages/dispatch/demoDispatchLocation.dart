@@ -31,7 +31,7 @@ class _DemoDispatchLocationState extends State<DemoDispatchLocation> {
 
   @override
   void dispose() {
-    //  _demoTimer.cancel();
+    _demoTimer.cancel();
     super.dispose();
   }
 

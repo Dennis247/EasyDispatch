@@ -21,7 +21,7 @@ class GlobalWidgets {
     );
     final text = Text(
       result,
-      style: AppTextStyles.moneyTextStyle,
+      style: AppTextStyles.appTextStyle,
     );
     return text;
   }

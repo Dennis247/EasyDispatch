@@ -1,7 +1,6 @@
 import 'package:dispatch_app_client/src/lib_export.dart';
 import 'package:dispatch_app_client/ui/pages/dispatch/demoDispatchLocation.dart';
 import 'package:dispatch_app_client/ui/pages/dispatch/dispatchStausPage.dart';
-import 'package:dispatch_app_client/ui/pages/home/homePage.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -43,6 +42,20 @@ class _DispatchDetailsState extends State<DispatchDetails> {
     );
   }
 
+  _buildCurrencyRow(String title, String subTitle) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          title,
+          style: AppTextStyles.smallgreyTextStyle,
+        ),
+        GlobalWidgets.getFormattedAmount(subTitle),
+      ],
+    );
+  }
+
   _buildRowDetails2(String title, String subTitle, IconData iconData,
       String iconTitle, Function function) {
     return Row(
@@ -68,17 +81,17 @@ class _DispatchDetailsState extends State<DispatchDetails> {
             ? SizedBox(
                 width: 100,
                 child: RaisedButton.icon(
-                    color: Constants.primaryColorLight,
+                    color: Constants.primaryColorDark,
                     shape: StadiumBorder(),
                     onPressed: function,
                     icon: Icon(
                       iconData,
                       size: 16,
-                      color: Constants.primaryColorDark,
+                      color: Constants.primaryColorLight,
                     ),
                     label: Text(
                       iconTitle,
-                      style: AppTextStyles.smallDarkTextStyle,
+                      style: AppTextStyles.smallWhiteTextStyle,
                     )),
               )
             : Text("")
@@ -104,82 +117,9 @@ class _DispatchDetailsState extends State<DispatchDetails> {
     return true;
   }
 
-  _buildCardHeader(IconData iconData, String title) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10, bottom: 0),
-      child: Row(
-        children: <Widget>[
-          Icon(iconData, color: Constants.primaryColorDark),
-          SizedBox(
-            width: 10,
-          ),
-          Text(
-            title,
-            style: AppTextStyles.orangeTextStyle,
-          ),
-        ],
-      ),
-    );
-  }
-
-  _completeDispatch() async {
-    //update dispatch Status as completed
-    GlobalWidgets.showConfirmationDialogue(
-        Constants.confirmDispatchCompleteMessage, context, () async {
-      _startLoading(true);
-      final ResponseModel responseModel =
-          await Provider.of<DispatchProvider>(context, listen: false)
-              .updateDispatchStatus(
-                  widget.dispatch.id, Constants.dispatchCompletedStatus);
-      if (!responseModel.isSUcessfull) {
-        GlobalWidgets.showFialureDialogue(
-            responseModel.responseMessage, context);
-        return;
-      } else {
-        Provider.of<NotificationProvider>(context, listen: false)
-            .displayNotification("Dispatch Completed",
-                "Dispatch Completed for ${widget.dispatch.dispatchReciever}");
-
-        // create completed dispatch Notification
-        Provider.of<NotificationProvider>(context, listen: false)
-            .createCompletedNotification(widget.dispatch);
-      }
-      _startLoading(false);
-      //goto dashboard
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => HompePage()),
-          (Route<dynamic> route) => false);
-    });
-  }
-
-  _buildCardInfo(Map<String, String> infoList, Size appSzie) {
-    List<Widget> children = [];
-    infoList.forEach((key, value) {
-      children.add(Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[_buildRowDetails(key, value), Divider()],
-      ));
-    });
-    return Card(
-      elevation: 2,
-      child: Container(
-        width: appSzie.width,
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: children),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final appSzie = GlobalWidgets.getAppSize(context);
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -198,123 +138,105 @@ class _DispatchDetailsState extends State<DispatchDetails> {
         height: appSzie.height,
         width: appSzie.width,
         child: Padding(
-          padding:
-              const EdgeInsets.only(top: 15, bottom: 15, left: 5, right: 5),
+          padding: const EdgeInsets.all(15.0),
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    _buildCardHeader(
-                      FontAwesomeIcons.solidAddressBook,
-                      "Dispatch Recipient",
-                    ),
-                    _buildCardInfo({
-                      "Name": widget.dispatch.dispatchReciever,
-                      "Phone Number": widget.dispatch.dispatchRecieverPhone,
-                      "Location": widget.dispatch.dispatchDestination,
-                      "Package Descriptiuon":
-                          widget.dispatch.dispatchDescription
-                    }, appSzie),
-                  ],
+                _buildRowDetails("Pick Up", widget.dispatch.pickUpLocation),
+                Divider(),
+                _buildRowDetails(
+                    "Delivery Location", widget.dispatch.dispatchDestination),
+                Divider(),
+                _buildRowDetails(
+                    "Dispatch Description",
+                    widget.dispatch.dispatchDescription != null
+                        ? widget.dispatch.dispatchDescription
+                        : ""),
+                Divider(),
+                _buildRowDetails("Dispatch Type", widget.dispatch.dispatchType),
+                Divider(),
+                _buildRowDetails(
+                    "Total Distance", widget.dispatch.estimatedDistance),
+                Divider(),
+                _isLoading
+                    ? GlobalWidgets.circularInidcator()
+                    : _buildRowDetails2(
+                        "Delivery Status",
+                        widget.dispatch.dispatchStatus,
+                        Icons.cancel,
+                        "CANCEL", () async {
+                        //   _startLoading(true);
+                        //show warning dialogue
+                        GlobalWidgets.showConfirmationDialogue(
+                            "Please Confirm Cancel DIspatch", context,
+                            () async {
+                          final response = await Provider.of<DispatchProvider>(
+                                  context,
+                                  listen: false)
+                              .updateDispatchStatus(widget.dispatch.id,
+                                  Constants.dispatchCancelledStatus);
+                          if (response.isSUcessfull == true) {
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (context) => DispatchStatus(
+                                          dispatchMessage:
+                                              Constants.cancellDispatchMessage,
+                                          imageUrl: "assets/images/premiun.png",
+                                          isDispatchProcessing: false,
+                                        )),
+                                (Route<dynamic> route) => false);
+                          } else {
+                            _startLoading(false);
+                            GlobalWidgets.showFialureDialogue(
+                                response.responseMessage, context);
+                          }
+                        });
+                      }),
+                _showCurrentLocation() ? Divider() : SizedBox(),
+                _showCurrentLocation()
+                    ? _buildRowDetails2(
+                        "current location",
+                        widget.dispatch.currentLocation,
+                        FontAwesomeIcons.mapPin,
+                        "Map", () {
+                        //check to see if it demo mode and display demo else use real time
+                        final settings =
+                            locator<SettingsServices>().appSettings;
+                        if (settings.isDemoMode) {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => DemoDispatchLocation(
+                                    dispatch: widget.dispatch,
+                                  )));
+                        } else {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => DispatchLocation(
+                                    dispatch: widget.dispatch,
+                                  )));
+                        }
+                      })
+                    : SizedBox(),
+                Divider(),
+                _buildCurrencyRow("Base Delivery Fee",
+                    widget.dispatch.dispatchBaseFare.toString()),
+                Divider(),
+                _buildCurrencyRow("Total Delivery Fee",
+                    widget.dispatch.dispatchTotalFare.toString()),
+                // _buildRowDetails("Total Delivery Fee",
+                //     widget.dispatch.dispatchTotalFare.toString()),
+                Divider(),
+                _buildRowDetails(
+                    "Reciever Name", widget.dispatch.dispatchReciever),
+                Divider(),
+                _buildRowDetails("Reciever PhoneNumber",
+                    widget.dispatch.dispatchRecieverPhone),
+                SizedBox(
+                  height: appSzie.height * 0.04,
                 ),
                 SizedBox(
-                  height: appSzie.height * 0.05,
+                  height: appSzie.height * 0.02,
                 ),
-                _buildCardHeader(Icons.location_on, "Dispatch Trip"),
-                _buildCardInfo({
-                  "Dispatch Type": widget.dispatch.dispatchType,
-                  "Pick up": widget.dispatch.pickUpLocation,
-                  "destination": widget.dispatch.dispatchDestination,
-                  "estimated duration":
-                      widget.dispatch.estimatedDIspatchDuration,
-                  "Distance in KM": widget.dispatch.estimatedDistance,
-                  "Cost Per KM": "N100 per KM",
-                  "Total Cosst": "N5,000"
-                }, appSzie),
-                SizedBox(
-                  height: appSzie.height * 0.05,
-                ),
-                _buildCardHeader(
-                    FontAwesomeIcons.shippingFast, "Dispatch Status"),
-                Card(
-                  elevation: 2,
-                  child: Container(
-                    width: appSzie.width,
-                    child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Column(
-                        children: <Widget>[
-                          _buildRowDetails2(
-                              "Delivery Status",
-                              widget.dispatch.dispatchStatus,
-                              Icons.cancel,
-                              "CANCEL", () async {
-                            //   _startLoading(true);
-                            //show warning dialogue
-                            GlobalWidgets.showConfirmationDialogue(
-                                "Please Confirm Cancel DIspatch", context,
-                                () async {
-                              final response =
-                                  await Provider.of<DispatchProvider>(context,
-                                          listen: false)
-                                      .updateDispatchStatus(widget.dispatch.id,
-                                          Constants.dispatchCancelledStatus);
-                              if (response.isSUcessfull == true) {
-                                Navigator.of(context).pushAndRemoveUntil(
-                                    MaterialPageRoute(
-                                        builder: (context) => DispatchStatus(
-                                              dispatchMessage: Constants
-                                                  .cancellDispatchMessage,
-                                              imageUrl:
-                                                  "assets/images/premiun.png",
-                                              isDispatchProcessing: false,
-                                            )),
-                                    (Route<dynamic> route) => false);
-                              } else {
-                                _startLoading(false);
-                                GlobalWidgets.showFialureDialogue(
-                                    response.responseMessage, context);
-                              }
-                            });
-                          }),
-                          _showCurrentLocation() ? Divider() : SizedBox(),
-                          _showCurrentLocation()
-                              ? _buildRowDetails2(
-                                  "current location",
-                                  widget.dispatch.currentLocation,
-                                  FontAwesomeIcons.mapPin,
-                                  "Map", () {
-                                  //check to see if it demo mode and display demo else use real time
-                                  final settings =
-                                      locator<SettingsServices>().appSettings;
-                                  if (settings.isDemoMode) {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                DemoDispatchLocation(
-                                                  dispatch: widget.dispatch,
-                                                )));
-                                  } else {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                DispatchLocation(
-                                                  dispatch: widget.dispatch,
-                                                )));
-                                  }
-                                })
-                              : SizedBox(),
-                          Divider(),
-                        ],
-                      ),
-                    ),
-                  ),
-                )
               ],
             ),
           ),
@@ -328,11 +250,26 @@ class _DispatchDetailsState extends State<DispatchDetails> {
                     height: 50,
                     alignment: Alignment.center,
                     child: AppRectButtonWidget(
-                        width: appSzie.width,
-                        buttonText: "COMPLETE DISPATCH",
-                        function: () {
-                          _completeDispatch();
-                        }),
+                      width: appSzie.width,
+                      buttonText: "COMPLTE DISPATCH",
+                      function: () {
+                        GlobalWidgets.showConfirmationDialogue(
+                            "Confirm that your dispatch is complete", context,
+                            () async {
+                          Provider.of<DispatchProvider>(context, listen: false)
+                              .updateDispatchStatus(widget.dispatch.id,
+                                  Constants.dispatchCompletedStatus);
+                          Navigator.of(context)
+                              .pushReplacement(MaterialPageRoute(
+                                  builder: (context) => DispatchStatus(
+                                        dispatchMessage:
+                                            "Dispatch Complted Sucessfully",
+                                        isDispatchProcessing: false,
+                                        imageUrl: "assets/images/express.png",
+                                      )));
+                        });
+                      },
+                    ),
                   ),
                 )
               : Text(""))
